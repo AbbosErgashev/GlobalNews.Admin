@@ -1,7 +1,10 @@
-﻿namespace News.Admin.DTO;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace News.Admin.DTO;
 
 public class NewsItemEditDto
 {
+    public Guid Id { get; set; }
     public required string Title { get; set; }
     public required string Description { get; set; }
     public IFormFile? NewMediaFile { get; set; }

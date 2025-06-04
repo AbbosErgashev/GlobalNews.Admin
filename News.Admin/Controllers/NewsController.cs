@@ -121,7 +121,6 @@ public class NewsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet, ActionName("Get")]
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id is null) return NotFound();

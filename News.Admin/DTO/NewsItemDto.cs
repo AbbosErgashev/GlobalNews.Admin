@@ -1,6 +1,4 @@
-﻿using Microsoft.Build.ObjectModelRemoting;
-
-namespace News.Admin.DTO;
+﻿namespace News.Admin.DTO;
 
 public class NewsItemDto
 {

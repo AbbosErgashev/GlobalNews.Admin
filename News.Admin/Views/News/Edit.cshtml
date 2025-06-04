@@ -28,10 +28,31 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ExistingMediaUrl" class="control-label"></label>
-                <input asp-for="ExistingMediaUrl" class="form-control" />
-                <span asp-validation-for="ExistingMediaUrl" class="text-danger"></span>
+                <label asp-for="NewMediaFile" class="control-label"></label>
+                <input asp-for="NewMediaFile" type="file" class="form-control" onchange="previewMedia(this)" />
+                <span asp-validation-for="NewMediaFile" class="text-danger"></span>
             </div>
+
+            <div id="mediaPreview" class="mt-2">
+                @{
+                    var ext = System.IO.Path.GetExtension(Model.ExistingMediaUrl)?.ToLower();
+                }
+                @if (!string.IsNullOrEmpty(Model.ExistingMediaUrl))
+                {
+                    if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
+                    {
+                        <img src="@Model.ExistingMediaUrl" id="previewImg" width="100" height="100" style="object-fit: cover;" />
+                    }
+                    else if (ext == ".mp4")
+                    {
+                        <video id="previewVideo" width="100" height="100" controls>
+                            <source src="@Model.ExistingMediaUrl" type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    }
+                }
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -42,7 +63,44 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function previewMedia(input) {
+            const file = input.files[0];
+            const previewContainer = document.getElementById("mediaPreview");
+            previewContainer.innerHTML = "";
+
+            if (!file) return;
+
+            const ext = file.name.split('.').pop().toLowerCase();
+            const url = URL.createObjectURL(file);
+
+            if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
+                const img = document.createElement("img");
+                img.src = url;
+                img.width = 100;
+                img.height = 100;
+                img.style.objectFit = "cover";
+                previewContainer.appendChild(img);
+            } else if (ext === "mp4") {
+                const video = document.createElement("video");
+                video.width = 100;
+                video.height = 100;
+                video.controls = true;
+
+                const source = document.createElement("source");
+                source.src = url;
+                source.type = "video/mp4";
+
+                video.appendChild(source);
+                previewContainer.appendChild(video);
+            } else {
+                previewContainer.innerText = "Preview not supported for this file type.";
+            }
+        }
+    </script>
 }

@@ -1,0 +1,65 @@
+﻿@model News.Admin.DTO.NewsItemDto
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>NewsItemDto</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            Media File
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                var ext = System.IO.Path.GetExtension(Model.MediaUrl)?.ToLower();
+            }
+            @if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
+            {
+                <img src="@Model.MediaUrl" width="300" height="150" style="object-fit: cover;" />
+            }
+            else if (ext == ".mp4")
+            {
+                <video width="300" height="150" controls>
+                    <source src="@Model.MediaUrl" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+            }
+            else
+            {
+                <span>Unknown media</span>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    <a asp-action="Index">Back to List</a>
+</div>
