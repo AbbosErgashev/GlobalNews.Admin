@@ -4,29 +4,21 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h2>Welcome Admin</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Id
-            </th>
-            <th>
-                Title
-            </th>
-            <th>
-                Description
-            </th>
-            <th>
-                Media File
-            </th>
-            <th>
-                CreatedAt
-            </th>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Media File</th>
+            <th>CreatedAt</th>
+            <th>UpdatedAt</th>
             <th></th>
         </tr>
     </thead>
@@ -34,22 +26,33 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
                 <td>
                     @{
                         var ext = System.IO.Path.GetExtension(item.MediaUrl)?.ToLower();
                     }
                     @if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
                     {
-                        <img src="@item.MediaUrl" width="300" height="150" style="object-fit: cover;" />
+                        <img src="@item.MediaUrl"
+                             width="300" height="150"
+                             style="object-fit: cover; cursor: pointer;"
+                             data-toggle="modal"
+                             data-target="#modal-@item.Id" />
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal-@item.Id" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" style="max-width: 700px;" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body text-center p-0">
+                                        <img src="@item.MediaUrl"
+                                             alt="Full Image"
+                                             style="width: 100%; height: auto; max-height: 500px; object-fit: contain;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
                     else if (ext == ".mp4")
                     {
@@ -63,16 +66,43 @@
                         <span>Unknown media</span>
                     }
                 </td>
-
+                <td>@Html.DisplayFor(modelItem => item.CreatedAt)</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                    @if (item.UpdatedAt == null)
+                    {
+                        <text>have not updated yet</text>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.UpdatedAt)
+                    }
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.Id}) |
-                    @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id=item.Id})
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 700px;">
+        <div class="modal-content">
+            <div class="modal-body text-center p-2">
+                <img id="modalImage" src="" style="width: 100%; height: auto; max-height: 500px; object-fit: contain;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('#imageModal').on('show.bs.modal', function (event) {
+            var img = $(event.relatedTarget);
+            var url = img.data('img-url');
+            $('#modalImage').attr('src', url);
+        });
+    </script>
+}

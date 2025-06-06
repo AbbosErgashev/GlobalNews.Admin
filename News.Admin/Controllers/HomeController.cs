@@ -15,6 +15,13 @@ namespace News.Admin.Controllers
 
         public IActionResult Index()
         {
+            var isAuthenticated = HttpContext.Session.GetString("IsAuthenticated");
+            if (string.IsNullOrEmpty(isAuthenticated))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            ViewBag.Username = HttpContext.Session.GetString("Username");
             return View();
         }
 

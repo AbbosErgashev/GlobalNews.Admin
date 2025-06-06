@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace News.Admin.DTO;
+﻿namespace News.Admin.DTO;
 
 public class NewsItemEditDto
 {
@@ -9,4 +7,5 @@ public class NewsItemEditDto
     public required string Description { get; set; }
     public IFormFile? NewMediaFile { get; set; }
     public string? ExistingMediaUrl { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

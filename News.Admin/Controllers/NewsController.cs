@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using News.Admin.Data;
 using News.Admin.DTO;
@@ -21,10 +20,21 @@ public class NewsController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var getAll = await _context.NewsItems.OrderByDescending(x => x.CreatedAt).ToListAsync();
+        try
+        {
+            var getAll = await _context.NewsItems.OrderByDescending(x => x.CreatedAt).ToListAsync();
+            if (getAll is null)
+            {
+                return NoContent();
+            }
 
-        var entity = getAll.Select(NewsMapper.ToDto).ToList();
-        return View(entity);
+            var entity = getAll.Select(NewsMapper.ToDto).ToList();
+            return View(entity);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
     public IActionResult Create()
@@ -40,7 +50,7 @@ public class NewsController : Controller
 
         if (item.MediaFile == null || item.MediaFile.Length == 0)
         {
-            ModelState.AddModelError("MediaFile", "File did not check.");
+            ModelState.AddModelError("MediaFile", "File did not check");
             return View(item);
         }
 
@@ -67,10 +77,10 @@ public class NewsController : Controller
 
         var dto = new NewsItemEditDto
         {
-            Id = entity.Id,
             Title = entity.Title,
             Description = entity.Description,
-            ExistingMediaUrl = entity.MediaUrl
+            ExistingMediaUrl = entity.MediaUrl,
+            UpdatedAt = DateTime.UtcNow
         };
 
         return View(dto);
@@ -87,11 +97,15 @@ public class NewsController : Controller
 
         if (entity is null) return NotFound();
 
-        if (dto.NewMediaFile != null)
+        if (dto.NewMediaFile != null && dto.NewMediaFile.Length > 0)
         {
             var newMediaUrl = await SaveMediaFileAsync(dto.NewMediaFile);
             entity.MediaUrl = newMediaUrl;
         }
+
+        entity.Title = dto.Title;
+        entity.Description = dto.Description;
+        entity.UpdatedAt = DateTime.UtcNow;
 
         _context.Update(entity);
         await _context.SaveChangesAsync();

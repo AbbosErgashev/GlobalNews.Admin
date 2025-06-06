@@ -11,7 +11,8 @@ public static class NewsMapper
         Title = item.Title,
         Description = item.Description,
         MediaUrl = item.MediaUrl,
-        CreatedAt = item.CreatedAt
+        CreatedAt = item.CreatedAt,
+        UpdatedAt = item.UpdatedAt
     };
 
     public static NewsItem ToEntity(NewsItemDto dto) => new()
@@ -20,6 +21,7 @@ public static class NewsMapper
         Title = dto.Title,
         Description = dto.Description,
         MediaUrl = dto.MediaUrl!,
-        CreatedAt = dto.CreatedAt
+        CreatedAt = dto.CreatedAt,
+        UpdatedAt = dto.UpdatedAt
     };
 }

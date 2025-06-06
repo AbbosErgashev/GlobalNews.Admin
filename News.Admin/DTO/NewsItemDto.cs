@@ -7,5 +7,6 @@ public class NewsItemDto
     public required string Description { get; set; }
     public string? MediaUrl { get; set; }
     public IFormFile? MediaFile { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
 }
