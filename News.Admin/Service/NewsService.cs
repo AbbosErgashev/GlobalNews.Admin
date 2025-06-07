@@ -102,23 +102,41 @@ public class NewsService : INewsService
         return $"/uploads/{fileName}";
     }
 
-    public async Task<NewsPaginationDto> GetPaginationAsync(int page, int pageSize)
+    public async Task<NewsPaginationDto> GetPaginationAsync(PaginationDto pgnDto)
     {
-        var totalCount = await _context.NewsItems.CountAsync();
-        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-        if (page < 1 || page > totalPages) page = 1;
-
-        var items = await _context.NewsItems
+        var allItems = await _context.NewsItems
             .OrderByDescending(x => x.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .ToListAsync();
+
+        var lowered = pgnDto.SearchText?.Trim().ToLower();
+
+        if (!string.IsNullOrEmpty(lowered))
+        {
+            allItems = allItems
+                .Where(s =>
+                    s.Title.ToLower().Contains(lowered) ||
+                    s.Description.ToLower().Contains(lowered) ||
+                    s.CreatedAt.ToString().Contains(lowered) ||
+                    (s.UpdatedAt != null && s.UpdatedAt.Value.ToString().Contains(lowered))
+                )
+                .ToList();
+        }
+
+        var totalCount = allItems.Count;
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pgnDto.PageSize);
+        if (pgnDto.Page < 1 || pgnDto.Page > totalPages) pgnDto.Page = 1;
+
+        var items = allItems
+            .Skip((pgnDto.Page - 1) * pgnDto.PageSize)
+            .Take(pgnDto.PageSize)
+            .ToList();
 
         return new NewsPaginationDto
         {
             NewsItemDtos = items.Select(NewsMapper.ToDto).ToList(),
-            CurrentPage = page,
-            TotalPage = totalPages
+            CurrentPage = pgnDto.Page,
+            TotalPage = totalPages,
+            SearchText = pgnDto.SearchText
         };
     }
 }

@@ -13,9 +13,11 @@ public class NewsController : Controller
         _service = service;
     }
 
-    public async Task<IActionResult> Index(int page = 1)
+    public async Task<IActionResult> Index(string searchText, int page = 1)
     {
-        var entity = await _service.GetPaginationAsync(page, 5);
+        var pageSize = 3;
+        var paginationDto = new PaginationDto { Page = page, PageSize = pageSize, SearchText = searchText };
+        var entity = await _service.GetPaginationAsync(paginationDto);
         if (entity == null) return NoContent();
         return View(entity);
     }
@@ -32,6 +34,7 @@ public class NewsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id is null) return NotFound();
@@ -39,7 +42,15 @@ public class NewsController : Controller
         var entity = await _service.GetByIdAsync(id.Value);
         if (entity is null) return NotFound();
 
-        return View(entity);
+        var dto = new NewsItemEditDto
+        {
+            Id = entity.Id,
+            Title = entity.Title,
+            Description = entity.Description,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        return View(dto);
     }
 
     [HttpPost]

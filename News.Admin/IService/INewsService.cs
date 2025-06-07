@@ -1,6 +1,4 @@
-﻿using Microsoft.Build.ObjectModelRemoting;
-using News.Admin.DTO;
-using News.Admin.Models;
+﻿using News.Admin.DTO;
 
 namespace News.Admin.IService;
 
@@ -12,5 +10,5 @@ public interface INewsService
     public Task UpdateAsync(Guid id, NewsItemEditDto itemDto);
     public Task DeleteAsync(Guid id);
     public Task<string?> SaveMediaFileAsync(IFormFile? file);
-    public Task<NewsPaginationDto> GetPaginationAsync(int page, int pageSize);
+    public Task<NewsPaginationDto> GetPaginationAsync(PaginationDto pgnDto);
 }
