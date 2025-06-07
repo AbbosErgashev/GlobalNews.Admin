@@ -13,10 +13,10 @@ public class NewsController : Controller
         _service = service;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int page = 1)
     {
-        var entity = await _service.GetAllAsync();
-        if (entity == null || entity.Count == 0) return NoContent();
+        var entity = await _service.GetPaginationAsync(page, 5);
+        if (entity == null) return NoContent();
         return View(entity);
     }
 

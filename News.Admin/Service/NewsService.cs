@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using News.Admin.Data;
 using News.Admin.DTO;
 using News.Admin.IService;
@@ -49,7 +48,7 @@ public class NewsService : INewsService
     public async Task<List<NewsItemDto>> GetAllAsync()
     {
         var entities = await _context.NewsItems.OrderByDescending(x => x.CreatedAt).ToListAsync();
-        if (entities.Count == 0) 
+        if (entities.Count == 0)
             throw new ArgumentNullException(nameof(entities));
 
         var dto = entities.Select(NewsMapper.ToDto).ToList();
@@ -101,5 +100,25 @@ public class NewsService : INewsService
         }
 
         return $"/uploads/{fileName}";
+    }
+
+    public async Task<NewsPaginationDto> GetPaginationAsync(int page, int pageSize)
+    {
+        var totalCount = await _context.NewsItems.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+        if (page < 1 || page > totalPages) page = 1;
+
+        var items = await _context.NewsItems
+            .OrderByDescending(x => x.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new NewsPaginationDto
+        {
+            NewsItemDtos = items.Select(NewsMapper.ToDto).ToList(),
+            CurrentPage = page,
+            TotalPage = totalPages
+        };
     }
 }

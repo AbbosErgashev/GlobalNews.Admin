@@ -12,4 +12,5 @@ public interface INewsService
     public Task UpdateAsync(Guid id, NewsItemEditDto itemDto);
     public Task DeleteAsync(Guid id);
     public Task<string?> SaveMediaFileAsync(IFormFile? file);
+    public Task<NewsPaginationDto> GetPaginationAsync(int page, int pageSize);
 }
