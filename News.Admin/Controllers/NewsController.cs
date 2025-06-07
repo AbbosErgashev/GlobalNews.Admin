@@ -1,46 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using News.Admin.Data;
 using News.Admin.DTO;
-using News.Admin.Models;
-using News.Admin.NewsMapping;
+using News.Admin.IService;
 
 namespace News.Admin.Controllers;
 
 public class NewsController : Controller
 {
-    private readonly AppDbContext _context;
-    private readonly IWebHostEnvironment _env;
+    private readonly INewsService _service;
 
-    public NewsController(AppDbContext context, IWebHostEnvironment env)
+    public NewsController(INewsService service)
     {
-        _env = env;
-        _context = context;
+        _service = service;
     }
 
     public async Task<IActionResult> Index()
     {
-        try
-        {
-            var getAll = await _context.NewsItems.OrderByDescending(x => x.CreatedAt).ToListAsync();
-            if (getAll is null)
-            {
-                return NoContent();
-            }
-
-            var entity = getAll.Select(NewsMapper.ToDto).ToList();
-            return View(entity);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
+        var entity = await _service.GetAllAsync();
+        if (entity == null || entity.Count == 0) return NoContent();
+        return View(entity);
     }
 
-    public IActionResult Create()
-    {
-        return View();
-    }
+    public IActionResult Create() => View();
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -48,42 +28,18 @@ public class NewsController : Controller
     {
         if (!ModelState.IsValid) return View(item);
 
-        if (item.MediaFile == null || item.MediaFile.Length == 0)
-        {
-            ModelState.AddModelError("MediaFile", "File did not check");
-            return View(item);
-        }
-
-        var mediaUrl = await SaveMediaFileAsync(item.MediaFile);
-
-        var entity = new NewsItem
-        {
-            Id = Guid.NewGuid(),
-            Title = item.Title,
-            Description = item.Description,
-            MediaUrl = mediaUrl!,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _context.NewsItems.Add(entity);
-        await _context.SaveChangesAsync();
+        await _service.CreateAsync(item);
         return RedirectToAction(nameof(Index));
     }
 
     public async Task<IActionResult> Edit(Guid? id)
     {
-        var entity = await _context.NewsItems.FindAsync(id);
+        if (id is null) return NotFound();
+
+        var entity = await _service.GetByIdAsync(id.Value);
         if (entity is null) return NotFound();
 
-        var dto = new NewsItemEditDto
-        {
-            Title = entity.Title,
-            Description = entity.Description,
-            ExistingMediaUrl = entity.MediaUrl,
-            UpdatedAt = DateTime.UtcNow
-        };
-
-        return View(dto);
+        return View(entity);
     }
 
     [HttpPost]
@@ -93,22 +49,7 @@ public class NewsController : Controller
         if (id != dto.Id) return NotFound();
         if (!ModelState.IsValid) return View(dto);
 
-        var entity = await _context.NewsItems.FindAsync(id);
-
-        if (entity is null) return NotFound();
-
-        if (dto.NewMediaFile != null && dto.NewMediaFile.Length > 0)
-        {
-            var newMediaUrl = await SaveMediaFileAsync(dto.NewMediaFile);
-            entity.MediaUrl = newMediaUrl;
-        }
-
-        entity.Title = dto.Title;
-        entity.Description = dto.Description;
-        entity.UpdatedAt = DateTime.UtcNow;
-
-        _context.Update(entity);
-        await _context.SaveChangesAsync();
+        await _service.UpdateAsync(id, dto);
         return RedirectToAction(nameof(Index));
     }
 
@@ -116,52 +57,27 @@ public class NewsController : Controller
     {
         if (id == null) return NotFound();
 
-        var news = await _context.NewsItems.FindAsync(id);
-        if (news == null) return NotFound();
+        var entity = await _service.GetByIdAsync(id.Value);
+        if (entity is null) return NotFound();
 
-        var dto = NewsMapper.ToDto(news);
-        return View(dto);
+        return View(entity);
     }
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var items = await _context.NewsItems.FindAsync(id);
-        if (items == null) return NotFound();
-
-        _context.NewsItems.Remove(items);
-        await _context.SaveChangesAsync();
+        await _service.DeleteAsync(id);
         return RedirectToAction(nameof(Index));
     }
 
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id is null) return NotFound();
-        var entity = await _context.NewsItems.FindAsync(id);
 
+        var entity = await _service.GetByIdAsync(id);
         if (entity == null) return NotFound();
 
-        var dto = NewsMapper.ToDto(entity);
-        return View(dto);
-    }
-
-    private async Task<string?> SaveMediaFileAsync(IFormFile? file)
-    {
-        if (file is null || file.Length == 0) return null;
-
-        string uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-        if (!Directory.Exists(uploadsFolder))
-            Directory.CreateDirectory(uploadsFolder);
-
-        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-        string filePath = Path.Combine(uploadsFolder, fileName);
-
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream);
-        }
-
-        return $"/uploads/{fileName}";
+        return View(entity);
     }
 }

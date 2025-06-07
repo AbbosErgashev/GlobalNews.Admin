@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using News.Admin.Data;
+using News.Admin.IService;
+using News.Admin.Service;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<INewsService, NewsService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
