@@ -37,7 +37,23 @@
             }
             @if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
             {
-                <img src="@Model.MediaUrl" width="300" height="150" style="object-fit: cover;" />
+                <img src="@Model.MediaUrl"
+                     width="300" height="150"
+                     style="object-fit: cover; cursor: pointer;"
+                     data-toggle="modal"
+                     data-target="#modal-@Model.Id" />
+
+                <div class="modal fade" id="modal-@Model.Id" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" style="max-width: 700px;" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body text-center p-0">
+                                <img src="@Model.MediaUrl"
+                                     alt="Full Image"
+                                     style="width: 100%; height: auto; max-height: 500px; object-fit: contain;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
             else if (ext == ".mp4")
             {
@@ -76,3 +92,18 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<div class="modal fade" id="mediaModal" tabindex="-1" role="dialog" aria-labelledby="mediaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 700px;">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div id="modalMediaContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/media-edit-modal.js"></script>
+}

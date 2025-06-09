@@ -13,12 +13,18 @@ public class NewsController : Controller
         _service = service;
     }
 
-    public async Task<IActionResult> Index(string searchText, int page = 1)
+    public async Task<IActionResult> Index(string searchText, int page = 1, string sortOrder = "desc")
     {
         var pageSize = 3;
-        var paginationDto = new PaginationDto { Page = page, PageSize = pageSize, SearchText = searchText };
+        var paginationDto = new PaginationDto 
+        { 
+            Page = page, 
+            PageSize = pageSize, 
+            SearchText = searchText,
+            SortOrder = sortOrder
+        };
         var entity = await _service.GetPaginationAsync(paginationDto);
-        if (entity == null) return NoContent();
+        if (entity == null || entity.NewsItemDtos.Count == 0) return NoContent();
         return View(entity);
     }
 

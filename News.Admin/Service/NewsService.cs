@@ -45,16 +45,6 @@ public class NewsService : INewsService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<NewsItemDto>> GetAllAsync()
-    {
-        var entities = await _context.NewsItems.OrderByDescending(x => x.CreatedAt).ToListAsync();
-        if (entities.Count == 0)
-            throw new ArgumentNullException(nameof(entities));
-
-        var dto = entities.Select(NewsMapper.ToDto).ToList();
-        return dto;
-    }
-
     public async Task<NewsItemDto?> GetByIdAsync(Guid? id)
     {
         var entity = await _context.NewsItems.FindAsync(id);
@@ -102,41 +92,78 @@ public class NewsService : INewsService
         return $"/uploads/{fileName}";
     }
 
+    //public async Task<NewsPaginationDto> GetPaginationAsync(PaginationDto pgnDto)
+    //{
+    //    var allItems = await _context.NewsItems
+    //        .OrderByDescending(x => x.CreatedAt)
+    //        .ToListAsync();
+
+    //    var lowered = pgnDto.SearchText?.Trim().ToLower();
+
+    //    if (!string.IsNullOrEmpty(lowered))
+    //    {
+    //        allItems = allItems
+    //            .Where(s =>
+    //                s.Title.ToLower().Contains(lowered) ||
+    //                s.Description.ToLower().Contains(lowered) ||
+    //                s.CreatedAt.ToString().Contains(lowered) ||
+    //                (s.UpdatedAt != null && s.UpdatedAt.Value.ToString().Contains(lowered))
+    //            )
+    //            .ToList();
+    //    }
+
+    //    var totalCount = allItems.Count;
+    //    var totalPages = (int)Math.Ceiling(totalCount / (double)pgnDto.PageSize);
+    //    if (pgnDto.Page < 1 || pgnDto.Page > totalPages) pgnDto.Page = 1;
+
+    //    var items = allItems
+    //        .Skip((pgnDto.Page - 1) * pgnDto.PageSize)
+    //        .Take(pgnDto.PageSize)
+    //        .ToList();
+
+    //    return new NewsPaginationDto
+    //    {
+    //        NewsItemDtos = items.Select(NewsMapper.ToDto).ToList(),
+    //        CurrentPage = pgnDto.Page,
+    //        TotalPage = totalPages,
+    //        SearchText = pgnDto.SearchText
+    //    };
+    //}
+
     public async Task<NewsPaginationDto> GetPaginationAsync(PaginationDto pgnDto)
     {
-        var allItems = await _context.NewsItems
-            .OrderByDescending(x => x.CreatedAt)
-            .ToListAsync();
+        var query = _context.NewsItems.AsQueryable();
 
-        var lowered = pgnDto.SearchText?.Trim().ToLower();
-
-        if (!string.IsNullOrEmpty(lowered))
+        // Sortni CreatedAt bo'yicha
+        if (pgnDto.SortOrder == "asc")
         {
-            allItems = allItems
-                .Where(s =>
-                    s.Title.ToLower().Contains(lowered) ||
-                    s.Description.ToLower().Contains(lowered) ||
-                    s.CreatedAt.ToString().Contains(lowered) ||
-                    (s.UpdatedAt != null && s.UpdatedAt.Value.ToString().Contains(lowered))
-                )
-                .ToList();
+            query = query.OrderBy(x => x.CreatedAt);
+        }
+        else
+        {
+            query = query.OrderByDescending(x => x.CreatedAt);
         }
 
-        var totalCount = allItems.Count;
+        // Umumiy sonini olish
+        var totalCount = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)pgnDto.PageSize);
+
+        // Page chegarasini tekshirish
         if (pgnDto.Page < 1 || pgnDto.Page > totalPages) pgnDto.Page = 1;
 
-        var items = allItems
+        // Ma'lumotni sahifalash
+        var items = await query
             .Skip((pgnDto.Page - 1) * pgnDto.PageSize)
             .Take(pgnDto.PageSize)
-            .ToList();
+            .ToListAsync();
 
         return new NewsPaginationDto
         {
             NewsItemDtos = items.Select(NewsMapper.ToDto).ToList(),
             CurrentPage = pgnDto.Page,
             TotalPage = totalPages,
-            SearchText = pgnDto.SearchText
+            SortOrder = pgnDto.SortOrder
         };
     }
+
 }
