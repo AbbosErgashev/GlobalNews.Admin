@@ -47,7 +47,8 @@ public class NewsController : Controller
             Id = entity.Id,
             Title = entity.Title,
             Description = entity.Description,
-            UpdatedAt = DateTime.UtcNow
+            UpdatedAt = DateTime.UtcNow,
+            ExistingMediaUrl = entity.MediaUrl
         };
 
         return View(dto);
@@ -90,5 +91,13 @@ public class NewsController : Controller
         if (entity == null) return NotFound();
 
         return View(entity);
+    }
+
+    public async Task<IActionResult> SearchPartial(string searchText, int page = 1)
+    {
+        var pageSize = 3;
+        var paginationDto = new PaginationDto { Page = page, PageSize = pageSize, SearchText = searchText };
+        var entity = await _service.GetPaginationAsync(paginationDto);
+        return PartialView("_NewsListPartial", entity);
     }
 }

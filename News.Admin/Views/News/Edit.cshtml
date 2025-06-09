@@ -38,11 +38,14 @@
                 {
                     if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
                     {
-                        <img src="@Model.ExistingMediaUrl" id="previewImg" width="100" height="100" style="object-fit: cover;" />
+                        <img src="@Model.ExistingMediaUrl" id="previewImg" width="100" height="100"
+                             style="object-fit: cover; cursor: pointer;"
+                             onclick="openModalMedia('@Model.ExistingMediaUrl', 'image')" />
                     }
                     else if (ext == ".mp4")
                     {
-                        <video id="previewVideo" width="100" height="100" controls>
+                        <video id="previewVideo" width="100" height="100" controls style="cursor: pointer;"
+                               onclick="openModalMedia('@Model.ExistingMediaUrl', 'video')">
                             <source src="@Model.ExistingMediaUrl" type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
@@ -50,7 +53,7 @@
                 }
             </div>
 
-            <div class="form-group">
+            <div class="form-group mt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -60,44 +63,18 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<div class="modal fade" id="mediaModal" tabindex="-1" role="dialog" aria-labelledby="mediaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 700px;">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div id="modalMediaContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
-    <script>
-        function previewMedia(input) {
-            const file = input.files[0];
-            const previewContainer = document.getElementById("mediaPreview");
-            previewContainer.innerHTML = "";
-
-            if (!file) return;
-
-            const ext = file.name.split('.').pop().toLowerCase();
-            const url = URL.createObjectURL(file);
-
-            if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
-                const img = document.createElement("img");
-                img.src = url;
-                img.width = 100;
-                img.height = 100;
-                img.style.objectFit = "cover";
-                previewContainer.appendChild(img);
-            } else if (ext === "mp4") {
-                const video = document.createElement("video");
-                video.width = 100;
-                video.height = 100;
-                video.controls = true;
-
-                const source = document.createElement("source");
-                source.src = url;
-                source.type = "video/mp4";
-
-                video.appendChild(source);
-                previewContainer.appendChild(video);
-            } else {
-                previewContainer.innerText = "Preview not supported for this file type.";
-            }
-        }
-    </script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/media-edit-modal.js"></script>
 }
