@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using News.Admin.Data;
 using News.Admin.DTO;
+using News.Admin.DTO.NewsDto;
 using News.Admin.IService;
 using News.Admin.Models;
 using News.Admin.NewsMapping;
+using System.Linq;
 
 namespace News.Admin.Service;
 
@@ -28,7 +30,8 @@ public class NewsService : INewsService
             Title = itemDto.Title,
             Description = itemDto.Description,
             MediaUrl = mediaUrl!,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            CategoryId = itemDto.CategoryId
         };
 
         _context.NewsItems.Add(entity);
@@ -92,49 +95,29 @@ public class NewsService : INewsService
         return $"/uploads/{fileName}";
     }
 
-    //public async Task<NewsPaginationDto> GetPaginationAsync(PaginationDto pgnDto)
-    //{
-    //    var allItems = await _context.NewsItems
-    //        .OrderByDescending(x => x.CreatedAt)
-    //        .ToListAsync();
-
-    //    var lowered = pgnDto.SearchText?.Trim().ToLower();
-
-    //    if (!string.IsNullOrEmpty(lowered))
-    //    {
-    //        allItems = allItems
-    //            .Where(s =>
-    //                s.Title.ToLower().Contains(lowered) ||
-    //                s.Description.ToLower().Contains(lowered) ||
-    //                s.CreatedAt.ToString().Contains(lowered) ||
-    //                (s.UpdatedAt != null && s.UpdatedAt.Value.ToString().Contains(lowered))
-    //            )
-    //            .ToList();
-    //    }
-
-    //    var totalCount = allItems.Count;
-    //    var totalPages = (int)Math.Ceiling(totalCount / (double)pgnDto.PageSize);
-    //    if (pgnDto.Page < 1 || pgnDto.Page > totalPages) pgnDto.Page = 1;
-
-    //    var items = allItems
-    //        .Skip((pgnDto.Page - 1) * pgnDto.PageSize)
-    //        .Take(pgnDto.PageSize)
-    //        .ToList();
-
-    //    return new NewsPaginationDto
-    //    {
-    //        NewsItemDtos = items.Select(NewsMapper.ToDto).ToList(),
-    //        CurrentPage = pgnDto.Page,
-    //        TotalPage = totalPages,
-    //        SearchText = pgnDto.SearchText
-    //    };
-    //}
-
     public async Task<NewsPaginationDto> GetPaginationAsync(PaginationDto pgnDto)
     {
-        var query = _context.NewsItems.AsQueryable();
+        var query = _context.NewsItems
+            .Include(x => x.Category)
+            .AsQueryable();
 
-        // Sortni CreatedAt bo'yicha
+        if (!string.IsNullOrWhiteSpace(pgnDto.SearchText))
+        {
+            var lowered = pgnDto.SearchText.Trim().ToLower();
+            query = query.Where(n =>
+                n.Title.ToLower().Contains(lowered) ||
+                n.Description.ToLower().Contains(lowered) ||
+                n.CreatedAt.ToString().Contains(lowered) ||
+                n.Category.Name.ToLower().Contains(lowered) ||
+                (n.UpdatedAt != null && n.UpdatedAt.Value.ToString().Contains(lowered))
+            );
+        }
+
+        if (pgnDto.CategoryId.HasValue && pgnDto.CategoryId > 0)
+        {
+            query = query.Where(n => n.CategoryId == pgnDto.CategoryId);
+        }
+
         if (pgnDto.SortOrder == "asc")
         {
             query = query.OrderBy(x => x.CreatedAt);
@@ -144,14 +127,11 @@ public class NewsService : INewsService
             query = query.OrderByDescending(x => x.CreatedAt);
         }
 
-        // Umumiy sonini olish
         var totalCount = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)pgnDto.PageSize);
 
-        // Page chegarasini tekshirish
         if (pgnDto.Page < 1 || pgnDto.Page > totalPages) pgnDto.Page = 1;
 
-        // Ma'lumotni sahifalash
         var items = await query
             .Skip((pgnDto.Page - 1) * pgnDto.PageSize)
             .Take(pgnDto.PageSize)
@@ -162,8 +142,7 @@ public class NewsService : INewsService
             NewsItemDtos = items.Select(NewsMapper.ToDto).ToList(),
             CurrentPage = pgnDto.Page,
             TotalPage = totalPages,
-            SortOrder = pgnDto.SortOrder
+            SortOrder = pgnDto.SortOrder,
         };
     }
-
 }

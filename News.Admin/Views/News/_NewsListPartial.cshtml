@@ -1,15 +1,27 @@
-﻿@using News.Admin.DTO
+﻿@using News.Admin.DTO.NewsDto
 @model NewsPaginationDto
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
 
-<form method="get" asp-action="Index" class="form-inline mb-3">
+<form id="filterForm" method="get" asp-action="Index" class="form-inline mb-3">
+    <input type="hidden" name="Page" value="1" />
+    <input type="hidden" name="PageSize" value="@Model.CurrentPage" />
 
     <select name="SortOrder" class="form-control mr-2">
-        <option value="desc" selected="@((Model.SortOrder == "desc").ToString().ToLower())">Latest news</option>
-        <option value="asc" selected="@((Model.SortOrder == "asc").ToString().ToLower())">Oldest news</option>
+        <option value="desc" selected="@(Model.SortOrder == "desc" ? "selected" : null)">Latest news</option>
+        <option value="asc" selected="@(Model.SortOrder == "asc" ? "selected" : null)">Oldest news</option>
+    </select>
+
+    <select name="CategoryId" class="form-control mr-2" onchange="this.form.submit()">
+        <option value="">-- All Categories --</option>
+        @foreach (var category in ViewBag.Categories)
+        {
+            <option value="@category.Value" selected="@(category.Selected ? "selected" : null)">
+                @category.Text
+            </option>
+        }
     </select>
 
     <button type="submit" class="btn btn-primary">View</button>
@@ -20,6 +32,7 @@
         <tr>
             <th>Title</th>
             <th>Description</th>
+            <th>Category</th>
             <th>Media File</th>
             <th>CreatedAt</th>
             <th>UpdatedAt</th>
@@ -32,6 +45,7 @@
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.Title)</td>
                 <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@(item.Categories ?? "Category not defined")</td>
                 <td>
                     @{
                         var ext = System.IO.Path.GetExtension(item.MediaUrl)?.ToLower();

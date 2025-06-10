@@ -6,13 +6,14 @@ using News.Admin.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<INewsService, NewsService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connString = builder.Configuration.GetConnectionString("NewsConn");
     options.UseSqlServer(connString);
 });
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSession(options =>

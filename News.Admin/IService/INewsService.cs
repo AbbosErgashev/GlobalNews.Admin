@@ -1,4 +1,5 @@
 ﻿using News.Admin.DTO;
+using News.Admin.DTO.NewsDto;
 
 namespace News.Admin.IService;
 

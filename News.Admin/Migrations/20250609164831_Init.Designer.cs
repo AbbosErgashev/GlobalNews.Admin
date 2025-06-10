@@ -12,8 +12,8 @@ using News.Admin.Data;
 namespace News.Admin.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250603120737_update_model")]
-    partial class update_model
+    [Migration("20250609164831_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,11 +25,31 @@ namespace News.Admin.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("News.Admin.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("News.Admin.Models.NewsItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -39,16 +59,35 @@ namespace News.Admin.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MediaUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("NewsItems");
+                });
+
+            modelBuilder.Entity("News.Admin.Models.NewsItem", b =>
+                {
+                    b.HasOne("News.Admin.Models.Category", "Category")
+                        .WithMany("NewsItems")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("News.Admin.Models.Category", b =>
+                {
+                    b.Navigation("NewsItems");
                 });
 #pragma warning restore 612, 618
         }

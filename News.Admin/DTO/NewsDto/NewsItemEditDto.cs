@@ -1,4 +1,6 @@
-﻿namespace News.Admin.DTO;
+﻿using News.Admin.Models;
+
+namespace News.Admin.DTO.NewsDto;
 
 public class NewsItemEditDto
 {
@@ -8,4 +10,5 @@ public class NewsItemEditDto
     public IFormFile? NewMediaFile { get; set; }
     public string? ExistingMediaUrl { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public int CategoryId { get; set; }
 }
