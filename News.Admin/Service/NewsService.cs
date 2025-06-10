@@ -70,6 +70,7 @@ public class NewsService : INewsService
         entity.Title = itemDto.Title;
         entity.Description = itemDto.Description;
         entity.UpdatedAt = DateTime.UtcNow;
+        entity.CategoryId = itemDto.CategoryId;
 
         _context.NewsItems.Update(entity);
         await _context.SaveChangesAsync();
@@ -101,6 +102,13 @@ public class NewsService : INewsService
             .Include(x => x.Category)
             .AsQueryable();
 
+        // Kategoriya bo'yicha filter
+        if (pgnDto.CategoryId.HasValue && pgnDto.CategoryId > 0)
+        {
+            query = query.Where(n => n.CategoryId == pgnDto.CategoryId);
+        }
+
+        // Qidiruv
         if (!string.IsNullOrWhiteSpace(pgnDto.SearchText))
         {
             var lowered = pgnDto.SearchText.Trim().ToLower();
@@ -108,29 +116,22 @@ public class NewsService : INewsService
                 n.Title.ToLower().Contains(lowered) ||
                 n.Description.ToLower().Contains(lowered) ||
                 n.CreatedAt.ToString().Contains(lowered) ||
-                n.Category.Name.ToLower().Contains(lowered) ||
-                (n.UpdatedAt != null && n.UpdatedAt.Value.ToString().Contains(lowered))
-            );
+                n.CreatedAt.ToString().Contains(lowered) ||
+                (n.UpdatedAt != null && n.UpdatedAt.Value.ToString().Contains(lowered)) ||
+                n.Category.Name.ToLower().Contains(lowered));
         }
 
-        if (pgnDto.CategoryId.HasValue && pgnDto.CategoryId > 0)
-        {
-            query = query.Where(n => n.CategoryId == pgnDto.CategoryId);
-        }
+        // Saralash
+        query = pgnDto.SortOrder == "asc"
+            ? query.OrderBy(x => x.CreatedAt)
+            : query.OrderByDescending(x => x.CreatedAt);
 
-        if (pgnDto.SortOrder == "asc")
-        {
-            query = query.OrderBy(x => x.CreatedAt);
-        }
-        else
-        {
-            query = query.OrderByDescending(x => x.CreatedAt);
-        }
-
+        // Pagination
         var totalCount = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)pgnDto.PageSize);
 
-        if (pgnDto.Page < 1 || pgnDto.Page > totalPages) pgnDto.Page = 1;
+        if (pgnDto.Page < 1 || pgnDto.Page > totalPages)
+            pgnDto.Page = 1;
 
         var items = await query
             .Skip((pgnDto.Page - 1) * pgnDto.PageSize)
@@ -143,6 +144,59 @@ public class NewsService : INewsService
             CurrentPage = pgnDto.Page,
             TotalPage = totalPages,
             SortOrder = pgnDto.SortOrder,
+            CategoryId = pgnDto.CategoryId
         };
     }
+
+    //public async Task<NewsPaginationDto> GetPaginationAsync(PaginationDto pgnDto)
+    //{
+    //    var query = _context.NewsItems
+    //        .Include(x => x.Category)
+    //        .AsQueryable();
+
+    //    if (!string.IsNullOrWhiteSpace(pgnDto.SearchText))
+    //    {
+    //        var lowered = pgnDto.SearchText.Trim().ToLower();
+    //        query = query.Where(n =>
+    //            n.Title.ToLower().Contains(lowered) ||
+    //            n.Description.ToLower().Contains(lowered) ||
+    //            n.CreatedAt.ToString().Contains(lowered) ||
+    //            n.Category.Name.ToLower().Contains(lowered) ||
+    //            (n.UpdatedAt != null && n.UpdatedAt.Value.ToString().Contains(lowered))
+    //        );
+    //    }
+
+    //    if (pgnDto.CategoryId.HasValue && pgnDto.CategoryId > 0)
+    //    {
+    //        query = query.Where(n => n.CategoryId == pgnDto.CategoryId);
+    //    }
+
+    //    if (pgnDto.SortOrder == "asc")
+    //    {
+    //        query = query.OrderBy(x => x.CreatedAt);
+    //    }
+    //    else
+    //    {
+    //        query = query.OrderByDescending(x => x.CreatedAt);
+    //    }
+
+    //    var totalCount = await query.CountAsync();
+    //    var totalPages = (int)Math.Ceiling(totalCount / (double)pgnDto.PageSize);
+
+    //    if (pgnDto.Page < 1 || pgnDto.Page > totalPages) pgnDto.Page = 1;
+
+    //    var items = await query
+    //        .Skip((pgnDto.Page - 1) * pgnDto.PageSize)
+    //        .Take(pgnDto.PageSize)
+    //        .ToListAsync();
+
+    //    return new NewsPaginationDto
+    //    {
+    //        NewsItemDtos = items.Select(NewsMapper.ToDto).ToList(),
+    //        CurrentPage = pgnDto.Page,
+    //        TotalPage = totalPages,
+    //        SortOrder = pgnDto.SortOrder,
+    //    };
+    //}
+
 }

@@ -7,4 +7,5 @@ public class NewsPaginationDto
     public int TotalPage { get; set; }
     public string? SearchText { get; set; }
     public string? SortOrder { get; set; }
+    public int? CategoryId { get; set; }
 }

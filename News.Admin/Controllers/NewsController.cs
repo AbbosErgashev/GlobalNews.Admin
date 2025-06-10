@@ -19,35 +19,34 @@ public class NewsController : Controller
         _categoryService = categoryService;
     }
 
-    public async Task<IActionResult> Index(PaginationDto pgnDto)
+    public async Task<IActionResult> Index(int? page, int? pageSize, string sortOrder, int? categoryId)
     {
+        // Default qiymatlarni belgilash
+        int currentPage = page ?? 1;
+        int currentPageSize = pageSize ?? 3;
+        string currentSortOrder = string.IsNullOrEmpty(sortOrder) ? "desc" : sortOrder;
+
+        // Pagination DTO yaratish
+        var paginationDto = new PaginationDto
+        {
+            Page = currentPage,
+            PageSize = currentPageSize,
+            SortOrder = currentSortOrder,
+            CategoryId = categoryId
+        };
+
+        // Ma'lumotlarni olish
+        var entity = await _service.GetPaginationAsync(paginationDto);
+
+        // Kategoriyalar ro'yxati
         var categories = await _categoryService.GetAllAsync();
         ViewBag.Categories = categories.Select(c => new SelectListItem
         {
             Value = c.Id.ToString(),
-            Text = c.Name
-        }).ToList();
-
-        ViewBag.SortOrder = pgnDto.SortOrder;
-        var pageSize = 3;
-        var paginationDto = new PaginationDto
-        {
-            Page = pgnDto.Page,
-            PageSize = pgnDto.PageSize,
-            SearchText = pgnDto.SearchText,
-            SortOrder = pgnDto.SortOrder ?? "desc",
-            CategoryId = pgnDto.CategoryId
-        };
-
-        var entity = await _service.GetPaginationAsync(paginationDto);
-        ViewBag.Categories = categories.Select(c => new SelectListItem
-        {
-            Value = c.Id.ToString(),
             Text = c.Name,
-            Selected = pgnDto.CategoryId.HasValue && c.Id == pgnDto.CategoryId
+            Selected = categoryId.HasValue && c.Id == categoryId.Value
         }).ToList();
 
-        ViewBag.SelectedCategoryId = pgnDto.CategoryId;
         return View(entity);
     }
 
@@ -92,7 +91,11 @@ public class NewsController : Controller
         if (entity is null) return NotFound();
 
         var categories = await _categoryService.GetAllAsync();
-        ViewBag.Categories = categories;
+        ViewBag.Categories = categories.Select(c => new SelectListItem
+        {
+            Value = c.Id.ToString(),
+            Text = c.Name
+        }).ToList();
 
         var dto = new NewsItemEditDto
         {
@@ -114,9 +117,14 @@ public class NewsController : Controller
         if (id != dto.Id) return NotFound();
         if (!ModelState.IsValid)
         {
+            ModelState.AddModelError("CategoryId", "Please, CHeck the category.");
             var categories = await _categoryService.GetAllAsync();
-            ViewBag.Categories = categories;
-            return View(dto);
+            ViewBag.Categories = categories.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+            return View();
         }
 
         await _service.UpdateAsync(id, dto);
@@ -160,6 +168,13 @@ public class NewsController : Controller
             PageSize = pageSize,
             SearchText = searchText
         };
+
+        var categories = await _categoryService.GetAllAsync();
+        ViewBag.Categories = categories.Select(c => new SelectListItem
+        {
+            Value = c.Id.ToString(),
+            Text = c.Name
+        }).ToList();
 
         var entity = await _service.GetPaginationAsync(paginationDto);
         return PartialView("_NewsListPartial", entity);

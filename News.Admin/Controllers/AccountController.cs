@@ -4,6 +4,13 @@ namespace News.Admin.Controllers;
 
 public class AccountController : Controller
 {
+    private readonly IConfiguration _configuration;
+
+    public AccountController(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     [HttpGet]
     public ActionResult Login()
     {
@@ -13,16 +20,18 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Login(string username, string password)
     {
-        if (username == "username" && password == "123")
+        var configUsername = _configuration["Credentials:Username"];
+        var configPassword = _configuration["Credentials:Password"];
+
+        if (username == configUsername && password == configPassword)
         {
             HttpContext.Session.SetString("IsAuthenticated", "true");
             HttpContext.Session.SetString("Username", username);
             return RedirectToAction("Index", "Home");
         }
-
         else
         {
-            ViewBag.Error = "Login or password is not correct";
+            ViewBag.Error = "Login yoki parol noto‘g‘ri";
             return View();
         }
     }

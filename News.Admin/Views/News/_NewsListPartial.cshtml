@@ -5,27 +5,41 @@
     <a asp-action="Create">Create New</a>
 </p>
 
-<form id="filterForm" method="get" asp-action="Index" class="form-inline mb-3">
-    <input type="hidden" name="Page" value="1" />
-    <input type="hidden" name="PageSize" value="@Model.CurrentPage" />
+<form id="filterForm" method="get" asp-action="Index">
+    <!-- Barcha kerakli parametrlar -->
+    <input type="hidden" id="pageInput" name="Page" value="@Model.CurrentPage" />
+    <input type="hidden" name="PageSize" value="@Model.TotalPage" />
 
-    <select name="SortOrder" class="form-control mr-2">
-        <option value="desc" selected="@(Model.SortOrder == "desc" ? "selected" : null)">Latest news</option>
-        <option value="asc" selected="@(Model.SortOrder == "asc" ? "selected" : null)">Oldest news</option>
+    <select name="SortOrder" class="form-control">
+        <option value="desc" selected="@(Model.SortOrder == "desc")">Latest news</option>
+        <option value="asc" selected="@(Model.SortOrder == "asc")">Oldest news</option>
     </select>
 
-    <select name="CategoryId" class="form-control mr-2" onchange="this.form.submit()">
+    <select name="CategoryId" class="form-control" onchange="document.getElementById('pageInput').value=1; this.form.submit()">
         <option value="">-- All Categories --</option>
         @foreach (var category in ViewBag.Categories)
         {
-            <option value="@category.Value" selected="@(category.Selected ? "selected" : null)">
+            <option value="@category.Value" selected="@(category.Selected)">
                 @category.Text
             </option>
         }
     </select>
 
-    <button type="submit" class="btn btn-primary">View</button>
+    <button type="submit" class="btn btn-primary">Filter</button>
 </form>
+
+@section Scripts {
+    <script>
+        // Har bir pagination linki uchun
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.href;
+                window.location.href = url;
+            });
+        });
+    </script>
+}
 
 <table class="table">
     <thead>
