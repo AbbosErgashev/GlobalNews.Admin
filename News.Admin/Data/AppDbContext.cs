@@ -14,11 +14,5 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        //modelBuilder.Entity<NewsItem>()
-        //    .HasOne(n => n.Category)
-        //    .WithMany(c => c.NewsItems)
-        //    .HasForeignKey(n => n.CategoryId)
-        //    .OnDelete(DeleteBehavior.SetNull);
     }
 }

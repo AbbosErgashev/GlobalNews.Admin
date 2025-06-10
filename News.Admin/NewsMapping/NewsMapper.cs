@@ -3,6 +3,7 @@ using News.Admin.Models;
 
 namespace News.Admin.NewsMapping;
 
+#pragma warning disable
 public static class NewsMapper
 {
     public static NewsItemDto ToDto(NewsItem item) => new()

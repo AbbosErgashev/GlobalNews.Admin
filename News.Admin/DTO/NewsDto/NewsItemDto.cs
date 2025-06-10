@@ -1,7 +1,5 @@
-﻿using News.Admin.Models;
-
-namespace News.Admin.DTO.NewsDto;
-
+﻿namespace News.Admin.DTO.NewsDto;
+#pragma warning disable
 public class NewsItemDto
 {
     public Guid Id { get; set; }

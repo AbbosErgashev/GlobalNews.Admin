@@ -1,8 +1,11 @@
-﻿namespace News.Admin.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace News.Admin.Models;
 
 public class NewsItem
 {
     public Guid Id { get; set; }
+    [MaxLength(100)]
     public required string Title { get; set; }
     public required string Description { get; set; }
     public string? MediaUrl { get; set; }
