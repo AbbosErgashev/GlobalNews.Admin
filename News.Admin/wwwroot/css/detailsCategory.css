@@ -1,0 +1,33 @@
+﻿.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-weight: 600;
+}
+
+.table th {
+    white-space: nowrap;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+@@media (max-width: 768px) {
+    .col-md-6 {
+        width: 100%;
+    }
+
+    .d-flex {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}

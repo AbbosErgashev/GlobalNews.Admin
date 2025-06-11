@@ -1,8 +1,180 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="content-container">
+    <div class="header">
+        <div class="page-title">
+            <h1>Dashboard Overview</h1>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon users">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>1,254</h3>
+                <p>Total Users</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orders">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-info">
+                <h3>324</h3>
+                <p>New Orders</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon revenue">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-info">
+                <h3>$12,345</h3>
+                <p>Total Revenue</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon products">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="stat-info">
+                <h3>56</h3>
+                <p>Products</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Sales Overview</h3>
+                <select class="chart-select">
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+                    <option>Last 90 Days</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                [Sales Chart Would Appear Here]
+            </div>
+        </div>
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Traffic Sources</h3>
+            </div>
+            <div class="chart-container">
+                [Pie Chart Would Appear Here]
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="orders-card">
+            <div class="orders-header">
+                <h3>Recent Orders</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#ORD-0001</td>
+                        <td>John Doe</td>
+                        <td>2023-05-15</td>
+                        <td>$125.00</td>
+                        <td><span class="status completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>#ORD-0002</td>
+                        <td>Jane Smith</td>
+                        <td>2023-05-14</td>
+                        <td>$89.50</td>
+                        <td><span class="status pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>#ORD-0003</td>
+                        <td>Robert Johnson</td>
+                        <td>2023-05-13</td>
+                        <td>$245.75</td>
+                        <td><span class="status processing">Processing</span></td>
+                    </tr>
+                    <tr>
+                        <td>#ORD-0004</td>
+                        <td>Emily Davis</td>
+                        <td>2023-05-12</td>
+                        <td>$67.30</td>
+                        <td><span class="status completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>#ORD-0005</td>
+                        <td>Michael Wilson</td>
+                        <td>2023-05-11</td>
+                        <td>$156.90</td>
+                        <td><span class="status cancelled">Cancelled</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <a href="#" class="view-all">View All Orders</a>
+        </div>
+        <div class="activity-card">
+            <div class="activity-header">
+                <h3>Recent Activity</h3>
+            </div>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="activity-info">
+                        <h4>New User Registered</h4>
+                        <p>John Smith created an account</p>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="activity-info">
+                        <h4>New Order Placed</h4>
+                        <p>Order #ORD-0025 for $89.99</p>
+                        <div class="activity-time">4 hours ago</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="activity-info">
+                        <h4>Product Added</h4>
+                        <p>New product "Wireless Headphones" added</p>
+                        <div class="activity-time">1 day ago</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="activity-info">
+                        <h4>Order Shipped</h4>
+                        <p>Order #ORD-0020 has been shipped</p>
+                        <div class="activity-time">2 days ago</div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="view-all">View All Activity</a>
+        </div>
+    </div>
 </div>
+<link href="~/css/homeindex.css" rel="stylesheet" />

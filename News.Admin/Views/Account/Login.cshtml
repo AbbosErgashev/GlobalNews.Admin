@@ -7,73 +7,58 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | YourApp</title>
-
-    <!-- Google Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
-    <!-- Font Awesome -->
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body {
-        background-color: #f4f6f9;
-        font-family: 'Roboto', sans-serif;
-        }
-
-        .login-container {
-        max-width: 400px;
-        margin: 80px auto;
-        padding: 30px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-        }
-
-        .login-title {
-        font-size: 26px;
-        font-weight: 500;
-        margin-bottom: 20px;
-        text-align: center;
-        }
-
-        .form-control:focus {
-        box-shadow: none;
-        border-color: #007bff;
-        }
-    </style>
+    <link href="~/css/login.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <div class="login-container">
-            <div class="login-title">Welcome Admin</div>
-            @if(ViewBag.Error != null)
-            {
-                <div class="alert alert-danger text-center">
-                    @ViewBag.Error
-                </div>
-            }
-            <form action="/Account/Login" method="post">
-                <div class="form-group">
-                    <label for="username">Username or Email</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username or email" required />
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required />
-                </div>
-                <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="remember" />
-                    <label class="form-check-label" for="remember">Remember me</label>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Login</button>
-                <div class="text-center mt-2">
-                    <a href="https://github.com/AbbosErgashev/">Master Admin Support</a>
-                </div>
-            </form>
+    <div class="login-container">
+        <div class="brand-logo">
+            <a href="https://fuckyoucoin.my.canva.site">
+                <img src="https://cdn-icons-png.flaticon.com/512/5087/5087579.png" alt="Admin Panel">
+            </a>
         </div>
+
+        <div class="login-title">Admin Portal</div>
+        <div class="login-subtitle">Enter your credentials to access the dashboard</div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> @ViewBag.Error
+            </div>
+        }
+
+        <form action="/Account/Login" method="post">
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username or email" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required />
+            </div>
+
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="remember" />
+                <label class="form-check-label" for="remember">Remember me</label>
+            </div>
+
+            <button type="submit" class="btn btn-login">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+
+            <div class="login-footer">
+                <a href="#">Forgot password?</a> •
+                <a href="https://github.com/AbbosErgashev/">Contact Support</a>
+            </div>
+        </form>
     </div>
-    <!-- JS (Bootstrap & jQuery) -->
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
