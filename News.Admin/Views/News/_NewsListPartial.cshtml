@@ -1,5 +1,8 @@
-﻿@using News.Admin.DTO.NewsDto
+﻿@* @using News.Admin.DTO.NewsDto
 @model NewsPaginationDto
+<h2>Welcome Admin</h2>
+
+<input type="text" id="searchInput" class="form-control mr-2" placeholder="Search...">
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -187,3 +190,170 @@
     </div>
 </div>
 
+@section Scripts {
+    <script src="~/js/view-image-small.js"></script>
+    <script src="~/js/search-item.js"></script>
+} *@
+
+@using News.Admin.DTO.NewsDto
+@model NewsPaginationDto
+
+<div class="d-flex justify-content-between flex-wrap gap-2 mb-4">
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Create New
+    </a>
+</div>
+
+<form id="filterForm" method="get" asp-action="Index" class="row g-3 align-items-end mb-4">
+    <input type="hidden" id="pageInput" name="Page" value="@Model.CurrentPage" />
+    <input type="hidden" name="PageSize" value="@Model.TotalPage" />
+
+    <div class="col-md-4">
+        <label class="form-label fw-semibold">Sort Order</label>
+        <select name="SortOrder" class="form-select">
+            <option value="desc" selected="@(Model.SortOrder == "desc")">Latest news</option>
+            <option value="asc" selected="@(Model.SortOrder == "asc")">Oldest news</option>
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label fw-semibold">Category</label>
+        <select name="CategoryId" class="form-select" onchange="document.getElementById('pageInput').value=1; this.form.submit()">
+            <option value="">-- All Categories --</option>
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category.Value" selected="@(category.Selected)">@category.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-4 d-flex justify-content-md-start">
+        <button type="submit" class="btn btn-primary mt-md-4 w-100">
+            <i class="bi bi-funnel-fill"></i> Filter
+        </button>
+    </div>
+</form>
+
+<table class="table table-hover table-bordered align-middle text-center">
+    <thead class="table-primary">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Media</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.NewsItemDtos)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@(item.Categories ?? "Category not defined")</td>
+                <td>
+                    @{
+                        var ext = System.IO.Path.GetExtension(item.MediaUrl)?.ToLower();
+                    }
+                    @if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
+                    {
+                        <img src="@item.MediaUrl" width="100" height="70" class="img-thumbnail"
+                             style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#modal-@item.Id" />
+                        <div class="modal fade" id="modal-@item.Id" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-body p-0">
+                                        <img src="@item.MediaUrl" class="w-100 rounded" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (ext == ".mp4")
+                    {
+                        <video width="100" height="70" controls class="rounded">
+                            <source src="@item.MediaUrl" type="video/mp4" />
+                        </video>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Unknown media</span>
+                    }
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.CreatedAt)</td>
+                <td>
+                    @if (item.UpdatedAt == null)
+                    {
+                        <span class="text-danger">Not updated yet</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.UpdatedAt)
+                    }
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-warning btn-sm" })
+                        @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-info btn-sm" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-sm" })
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPage > 1)
+{
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage - 1)"
+                       asp-route-searchtext="@Model.SearchText"
+                       asp-route-sortorder="@Model.SortOrder">«</a>
+                </li>
+            }
+
+            @{
+                int startPage = Model.CurrentPage - 2;
+                int endPage = Model.CurrentPage + 2;
+
+                if (startPage < 1)
+                {
+                    endPage += (1 - startPage);
+                    startPage = 1;
+                }
+
+                if (endPage > Model.TotalPage)
+                {
+                    endPage = Model.TotalPage;
+                }
+            }
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-searchtext="@Model.SearchText"
+                       asp-route-sortorder="@Model.SortOrder">@i</a>
+                </li>
+            }
+
+            @if (Model.CurrentPage < Model.TotalPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage + 1)"
+                       asp-route-searchtext="@Model.SearchText"
+                       asp-route-sortorder="@Model.SortOrder">»</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

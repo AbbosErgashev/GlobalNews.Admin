@@ -1,0 +1,253 @@
+﻿.content-container {
+    padding: 1.5rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title h1 {
+    font-size: 1.8rem;
+    color: var(--dark);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+    .stat-icon.users {
+        background-color: #e0f2fe;
+        color: #0ea5e9;
+    }
+
+    .stat-icon.orders {
+        background-color: #ecfdf5;
+        color: #10b981;
+    }
+
+    .stat-icon.revenue {
+        background-color: #fef2f2;
+        color: #ef4444;
+    }
+
+    .stat-icon.products {
+        background-color: #f5f3ff;
+        color: #8b5cf6;
+    }
+
+.stat-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-info p {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+    .chart-header h3 {
+        font-size: 1.2rem;
+    }
+
+.chart-select {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+    background-color: white;
+}
+
+.chart-container {
+    height: 300px;
+    width: 100%;
+    background: #f8fafc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+}
+
+.activity-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.activity-header {
+    margin-bottom: 1.5rem;
+}
+
+    .activity-header h3 {
+        font-size: 1.2rem;
+    }
+
+.activity-item {
+    display: flex;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+    .activity-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    background-color: #eef2ff;
+    color: #4361ee;
+}
+
+.activity-info h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.activity-info p {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+.orders-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.orders-header {
+    margin-bottom: 1.5rem;
+}
+
+    .orders-header h3 {
+        font-size: 1.2rem;
+    }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+td {
+    font-size: 0.9rem;
+}
+
+.status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+    .status.completed {
+        background-color: #ecfdf5;
+        color: #10b981;
+    }
+
+    .status.pending {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
+
+    .status.processing {
+        background-color: #e0f2fe;
+        color: #0ea5e9;
+    }
+
+    .status.cancelled {
+        background-color: #fee2e2;
+        color: #ef4444;
+    }
+
+.view-all {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: #4361ee;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+    .view-all:hover {
+        text-decoration: underline;
+    }
+
+@@media (max-width: 992px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}

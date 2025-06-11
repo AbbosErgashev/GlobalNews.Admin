@@ -1,6 +1,98 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<link href="~/css/privacy.css" rel="stylesheet" />
+
+<div class="privacy-container">
+    <div class="privacy-header">
+        <h1><i class="fas fa-shield-alt"></i> @ViewData["Title"]</h1>
+        <p class="last-updated">Last updated: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+    </div>
+
+    <div class="privacy-content">
+        <section class="privacy-section">
+            <h2><i class="fas fa-info-circle"></i> Information We Collect</h2>
+            <p>Our admin panel collects the following types of information:</p>
+            <ul>
+                <li><strong>Account Information:</strong> Username, email address, and contact details for admin users</li>
+                <li><strong>Usage Data:</strong> Information about how you interact with our admin panel</li>
+                <li><strong>System Logs:</strong> IP addresses, browser type, and access times for security monitoring</li>
+                <li><strong>Cookies:</strong> We use essential cookies to maintain your admin session</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2><i class="fas fa-lock"></i> How We Use Your Information</h2>
+            <p>We use the collected information for:</p>
+            <div class="usage-grid">
+                <div class="usage-card">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>Authentication</h3>
+                    <p>To verify admin identities and secure access to the panel</p>
+                </div>
+                <div class="usage-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Analytics</h3>
+                    <p>To improve system performance and user experience</p>
+                </div>
+                <div class="usage-card">
+                    <i class="fas fa-bell"></i>
+                    <h3>Notifications</h3>
+                    <p>To send important system alerts and updates</p>
+                </div>
+                <div class="usage-card">
+                    <i class="fas fa-cog"></i>
+                    <h3>Maintenance</h3>
+                    <p>To troubleshoot issues and implement security patches</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="privacy-section">
+            <h2><i class="fas fa-share-alt"></i> Data Sharing</h2>
+            <p>We do not sell or rent your admin account information. Data may be shared with:</p>
+            <ul>
+                <li>Authorized personnel within our organization</li>
+                <li>Third-party service providers under strict confidentiality agreements</li>
+                <li>Legal authorities when required by law</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2><i class="fas fa-user-cog"></i> Your Rights</h2>
+            <p>As an admin user, you have the right to:</p>
+            <div class="rights-grid">
+                <div class="right-card">
+                    <i class="fas fa-eye"></i>
+                    <span>Access your data</span>
+                </div>
+                <div class="right-card">
+                    <i class="fas fa-edit"></i>
+                    <span>Update inaccuracies</span>
+                </div>
+                <div class="right-card">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Request deletion</span>
+                </div>
+                <div class="right-card">
+                    <i class="fas fa-download"></i>
+                    <span>Export your data</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="privacy-section">
+            <h2><i class="fas fa-question-circle"></i> Contact Us</h2>
+            <p>For privacy-related inquiries, please contact:</p>
+            <div class="contact-card">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <h3>Data Protection Officer</h3>
+                    <p>eaxusniddinovich@gmail.com</p>
+                    <p>+998 93-988-77-73</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

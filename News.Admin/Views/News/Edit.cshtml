@@ -4,75 +4,80 @@
 @{
     ViewData["Title"] = "Edit";
 }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<h1>Edit</h1>
+<h2 class="text-center mb-4">Edit News Item</h2>
 
-<h4>NewsItemEditDto</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId">Category</label>
-                <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Value", "Text"))" class="form-control">
-                    <option value="">-- Select Category --</option>
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewMediaFile" class="control-label"></label>
-                <input asp-for="NewMediaFile" type="file" class="form-control" onchange="previewMedia(this)" />
-                <span asp-validation-for="NewMediaFile" class="text-danger"></span>
-            </div>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow rounded-3">
+            <div class="card-body">
+                <form asp-action="Edit" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
 
-            <div id="mediaPreview" class="mt-2">
-                @{
-                    var ext = System.IO.Path.GetExtension(Model.ExistingMediaUrl)?.ToLower();
-                }
-                @if (!string.IsNullOrEmpty(Model.ExistingMediaUrl))
-                {
-                    if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
-                    {
-                        <img src="@Model.ExistingMediaUrl" id="previewImg" width="100" height="100"
-                             style="object-fit: cover; cursor: pointer;"
-                             onclick="openModalMedia('@Model.ExistingMediaUrl', 'image')" />
-                    }
-                    else if (ext == ".mp4")
-                    {
-                        <video id="previewVideo" width="100" height="100" controls style="cursor: pointer;"
-                               onclick="openModalMedia('@Model.ExistingMediaUrl', 'video')">
-                            <source src="@Model.ExistingMediaUrl" type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    }
-                }
-            </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
 
-            <div class="form-group mt-3">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                    <div class="form-group mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="CategoryId" class="form-label">Category</label>
+                        <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Value", "Text"))" class="form-select">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewMediaFile" class="form-label">New Media File</label>
+                        <input asp-for="NewMediaFile" type="file" class="form-control" onchange="previewMedia(this)" />
+                        <span asp-validation-for="NewMediaFile" class="text-danger small"></span>
+                    </div>
+
+                    <div id="mediaPreview" class="text-center mb-3">
+                        @{
+                            var ext = System.IO.Path.GetExtension(Model.ExistingMediaUrl)?.ToLower();
+                        }
+                        @if (!string.IsNullOrEmpty(Model.ExistingMediaUrl))
+                        {
+                            if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
+                            {
+                                <img src="@Model.ExistingMediaUrl" id="previewImg" class="img-fluid rounded shadow-sm" style="max-width: 200px; cursor: pointer;" onclick="openModalMedia('@Model.ExistingMediaUrl', 'image')" />
+                            }
+                            else if (ext == ".mp4")
+                            {
+                                <video id="previewVideo" class="img-fluid rounded shadow-sm" style="max-width: 200px; cursor: pointer;" controls onclick="openModalMedia('@Model.ExistingMediaUrl', 'video')">
+                                    <source src="@Model.ExistingMediaUrl" type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            }
+                        }
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+
+        <div class="mt-3 text-center">
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<div class="modal fade" id="mediaModal" tabindex="-1" role="dialog" aria-labelledby="mediaModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document" style="max-width: 700px;">
+<!-- Modal -->
+<div class="modal fade" id="mediaModal" tabindex="-1" aria-labelledby="mediaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-body text-center">
                 <div id="modalMediaContent"></div>

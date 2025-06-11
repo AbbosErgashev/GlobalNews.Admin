@@ -4,10 +4,11 @@
 @{
     ViewData["Title"] = "Index";
 }
+<h2 class="mb-4 text-primary fw-bold">Welcome, Admin 👋</h2>
 
-<h2>Welcome Admin</h2>
+<input type="text" id="searchInput" class="form-control w-100 w-md-50" placeholder="Search Item...">
+<br>
 
-<input type="text" id="searchInput" class="form-control mr-2" placeholder="Search...">
 
 <div id="newsResult">
     @await Html.PartialAsync("_NewsListPartial", Model)

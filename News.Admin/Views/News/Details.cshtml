@@ -2,103 +2,89 @@
 @model NewsItemDto
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "News Details";
 }
 
-<h1>Details</h1>
+<h1 class="text-center mb-4">📰 News Details</h1>
 
-<div>
-    <h4>NewsItemDto</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            Media File
-        </dt>
-        <dd class="col-sm-10">
-            @{
-                var ext = System.IO.Path.GetExtension(Model.MediaUrl)?.ToLower();
-            }
-            @if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
-            {
-                <img src="@Model.MediaUrl"
-                     width="300" height="150"
-                     style="object-fit: cover; cursor: pointer;"
-                     data-toggle="modal"
-                     data-target="#modal-@Model.Id" />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-center mb-3 text-primary">News Information</h4>
+                    <hr />
 
-                <div class="modal fade" id="modal-@Model.Id" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog" style="max-width: 700px;" role="document">
-                        <div class="modal-content">
-                            <div class="modal-body text-center p-0">
+                    <dl class="row">
+                        <dt class="col-sm-4 text-end">ID:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Id)</dd>
+
+                        <dt class="col-sm-4 text-end">Title:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Title)</dd>
+
+                        <dt class="col-sm-4 text-end">Description:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Description)</dd>
+
+                        <dt class="col-sm-4 text-end">Media:</dt>
+                        <dd class="col-sm-8">
+                            @{
+                                var ext = System.IO.Path.GetExtension(Model.MediaUrl)?.ToLower();
+                            }
+                            @if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
+                            {
                                 <img src="@Model.MediaUrl"
-                                     alt="Full Image"
-                                     style="width: 100%; height: auto; max-height: 500px; object-fit: contain;" />
-                            </div>
-                        </div>
+                                     class="img-fluid rounded shadow-sm"
+                                     style="max-height: 200px; cursor: pointer; object-fit: cover;"
+                                     data-bs-toggle="modal"
+                                     data-bs-target="#modal-@Model.Id" />
+
+                                <!-- Modal for Image -->
+                                <div class="modal fade" id="modal-@Model.Id" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-body p-0">
+                                                <img src="@Model.MediaUrl"
+                                                     class="img-fluid w-100 rounded"
+                                                     style="object-fit: contain;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (ext == ".mp4")
+                            {
+                                <video class="img-fluid rounded shadow-sm" style="max-height: 200px;" controls>
+                                    <source src="@Model.MediaUrl" type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Unknown media format</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4 text-end">Created At:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.CreatedAt)</dd>
+
+                        <dt class="col-sm-4 text-end">Updated At:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.UpdatedAt == null)
+                            {
+                                <span class="text-muted">Not updated yet</span>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(model => model.UpdatedAt)
+                            }
+                        </dd>
+                    </dl>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning shadow">✏️ Edit</a>
+                        <a asp-action="Index" class="btn btn-outline-secondary shadow">← Back to List</a>
                     </div>
                 </div>
-            }
-            else if (ext == ".mp4")
-            {
-                <video width="300" height="150" controls>
-                    <source src="@Model.MediaUrl" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-            }
-            else
-            {
-                <span>Unknown media</span>
-            }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.UpdatedAt == null)
-            {
-                <text>have not updated yet</text>
-            }
-            else
-            {
-                @Html.DisplayFor(model => model.UpdatedAt)
-            }
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<div class="modal fade" id="mediaModal" tabindex="-1" role="dialog" aria-labelledby="mediaModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document" style="max-width: 700px;">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <div id="modalMediaContent"></div>
             </div>
         </div>
     </div>
@@ -106,5 +92,4 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-    <script src="~/js/media-edit-modal.js"></script>
 }
