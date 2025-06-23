@@ -1,0 +1,34 @@
+version: '3.4'
+
+services:
+  adminservice:
+    image: newsadmin
+    build:
+      context: .
+      dockerfile: News.Admin/Dockerfile
+    ports:
+      - "5209:5209"
+    environment:
+      - ASPNETCORE_URLS=http://+:5209
+    depends_on:
+      - mssql
+
+  userservice:
+    image: newsuser
+    build:
+      context: .
+      dockerfile: GlobalNews.User/Dockerfile
+    ports:
+      - "5085:5085"
+    environment:
+      - ASPNETCORE_URLS=http://+:5085
+    depends_on:
+      - adminservice
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "1433:1433"
