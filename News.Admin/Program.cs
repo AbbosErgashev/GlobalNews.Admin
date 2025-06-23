@@ -13,6 +13,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     var connString = builder.Configuration.GetConnectionString("NewsConn");
     options.UseSqlServer(connString);
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 
@@ -32,14 +39,18 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseCors("AllowAll");
+
 app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}");
+
+app.MapControllers();
 
 app.Run();
